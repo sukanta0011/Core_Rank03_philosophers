@@ -10,7 +10,7 @@ CC = cc
 # SRCS = $(addprefix $(SRC_DIR)/, $(MY_SRCS))
 SRCS = $(wildcard srcs/*.c)
 OBJS = $(SRCS:.c=.o)
-NAME = push_swap
+NAME = philo
 
 all: $(NAME)
 
