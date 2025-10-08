@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 19:33:26 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/08 16:04:52 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/08 16:45:21 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,8 @@ int main(void)
 	pthread_t	monitor;
 	int			i;
 
-	info.philos = 20;
-	info.death_time = 100;
+	info.philos = 3;
+	info.death_time = 500;
 	info.sleeping_time = 300;
 	info.eating_time = 200;
 	info.thinking_time = 400;

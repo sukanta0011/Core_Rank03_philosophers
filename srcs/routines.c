@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 09:25:02 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/08 16:08:58 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/08 16:44:10 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,23 +35,27 @@ void	*monitor_routine(void* arg)
 
 	run = 1;
 	philo = (t_thread *)arg;
-	i = 0;
 	philo_num = philo[0].info.philos;
 	while (run)
 	{
+		i = 0;
 		while (i < philo_num)
 		{
+			pthread_mutex_lock(philo[i].print_lock);
 			if (!is_alive(&philo[i]))
 			{
 				change_state(&philo[i], &philo[i].dead, 1);
-				print_philo_state(philo[i], "is dead");
+				// pthread_mutex_unlock(philo[i].print_lock);
+				// print_philo_state(philo[i], "is dead");
 				run = 0;
 				return (NULL);
 			}
+			pthread_mutex_unlock(philo[i].print_lock);
 			i++;
 		}
 		usleep(1000);
 	}
+	stop_routine(philo);
     return (NULL);
 }
 

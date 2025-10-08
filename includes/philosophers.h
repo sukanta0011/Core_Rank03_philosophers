@@ -53,6 +53,7 @@ void	*philo_routine(void* arg);
 void	*monitor_routine(void* arg);
 int		is_alive(t_thread *philo);
 void	change_state(t_thread *philo, t_state *state, t_bool ans);
+void	stop_routine(t_thread *philo);
 void	p_eat(t_thread *philo);
 void	p_think(t_thread *philo);
 void	p_sleep(t_thread *philo);
