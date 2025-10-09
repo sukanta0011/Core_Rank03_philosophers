@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 09:25:02 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/09 15:45:09 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/09 21:09:02 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	*monitor_routine(void* arg)
 			}
 			i++;
 		}
-		usleep(1000);
+		msleep(1);
 	}
     return (NULL);
 }

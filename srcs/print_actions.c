@@ -15,11 +15,11 @@ void	print_philo_state(t_thread *philo, char *msg)
 
 void	filter_philo_state_changed(t_thread *philo, t_bool *state)
 {
-    if (state == &philo->fl && *state)
-        print_philo_state(philo, "has taken left fork");
-    else if (state == &philo->fr && *state)
-        print_philo_state(philo, "has taken right fork");
-    else if (state == &philo->sleeping && *state)
+    // if (state == &philo->fl && *state)
+    //     print_philo_state(philo, "has taken left fork");
+    // else if (state == &philo->fr && *state)
+    //     print_philo_state(philo, "has taken right fork");
+    if (state == &philo->sleeping && *state)
         print_philo_state(philo, "is sleeping");
     else if (state == &philo->thinking && *state)
         print_philo_state(philo, "is thinking");

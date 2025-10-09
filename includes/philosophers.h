@@ -48,8 +48,8 @@ typedef struct s_thread
 	t_bool 		thinking;
 	t_bool		finised;
 	t_bool		dead;
-	t_bool		fl;
-	t_bool		fr;
+	t_bool		*fl;
+	t_bool		*fr;
 	t_mutex		*fork_left;
 	t_mutex		*fork_right;
 	t_mutex		*print_lock;
@@ -64,6 +64,7 @@ int		init_philos(t_thread *philo, t_info info);
 // int		init_philos(t_thread *philo, t_mutex *fork, t_mutex	*print_lock
 // 			, t_mutex *state_lock, t_info info);
 
+void	msleep(long int msec);
 void	*philo_routine(void* arg);
 void	*monitor_routine(void* arg);
 int		is_alive(t_thread *philo);

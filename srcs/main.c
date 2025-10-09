@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 19:33:26 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/09 15:53:43 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/09 23:37:48 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int main(void)
 	pthread_t	monitor;
 	int			i;
 
-	info.philos = 3;
+	info.philos = 4;
 	info.death_time = 700;
 	info.sleeping_time = 200;
 	info.eating_time = 200;
@@ -32,7 +32,7 @@ int main(void)
 	while (i < info.philos)
 	{
 		pthread_create(&philo[i].thread, NULL, philo_routine, &philo[i]);
-		usleep(1000);
+		// usleep(1000);
 		i++;
 	}
 	pthread_create(&monitor, NULL, monitor_routine, philo);

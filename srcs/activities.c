@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 09:26:03 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/09 16:08:38 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/09 23:37:22 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,21 +59,30 @@ void	set_time(t_thread *philo, t_state *state, t_bool ans)
 
 void	p_eat(t_thread *philo)
 {
-	if (!philo->fl && !philo->fr && !philo->finised && !philo->sleeping
+	if (!*philo->fl && !*philo->fr && !philo->finised && !philo->sleeping
 			&& !philo->thinking && !philo->eating.ans && !philo->dead)
 	{
 
 		pthread_mutex_lock(philo->fork_left);
-		change_state(philo, &philo->fl, 1);
+		// change_state(philo, &philo->fl, 1);
 		pthread_mutex_lock(philo->fork_right);
-		change_state(philo, &philo->fr, 1);
+		// change_state(philo, &philo->fr, 1);
+		pthread_mutex_lock(philo->state_lock);
+		*philo->fl = 1;
+		*philo->fr = 1;
+		pthread_mutex_unlock(philo->state_lock);
+		
 		set_time(philo, &philo->eating, 1);
-		// usleep(philo->info.eating_time * 1000);
 		msleep(philo->info.eating_time);
+		
+		pthread_mutex_lock(philo->state_lock);
+		*philo->fl = 0;
+		*philo->fr = 0;
+		pthread_mutex_unlock(philo->state_lock);
 		change_state(philo, &philo->eating.ans, 0);
-		change_state(philo, &philo->fr, 0);
+		// change_state(philo, &philo->fr, 0);
 		pthread_mutex_unlock(philo->fork_right);
-		change_state(philo, &philo->fl, 0);
+		// change_state(philo, &philo->fl, 0);
 		pthread_mutex_unlock(philo->fork_left);
 		print_philo_state(philo, "finished eating");
 	}
@@ -81,11 +90,10 @@ void	p_eat(t_thread *philo)
 
 void	p_think(t_thread *philo)
 {
-	if (!philo->fl && !philo->fr && !philo->finised && !philo->sleeping
+	if (!philo->finised && !philo->sleeping
 			&& !philo->thinking && !philo->eating.ans && !philo->dead)
 	{
 		change_state(philo, &philo->thinking, 1);
-		// usleep(philo->info.thinking_time * 1000);
 		msleep(philo->info.thinking_time);
 		change_state(philo, &philo->thinking, 0);
 	}
@@ -93,11 +101,10 @@ void	p_think(t_thread *philo)
 
 void	p_sleep(t_thread *philo)
 {
-	if (!philo->fl && !philo->fr && !philo->finised && !philo->sleeping
+	if (!philo->finised && !philo->sleeping
 			&& !philo->thinking && !philo->eating.ans && !philo->dead)
 	{
 		change_state(philo, &philo->sleeping, 1);
-		// usleep(philo->info.sleeping_time * 1000);
 		msleep(philo->info.sleeping_time);
 		change_state(philo, &philo->sleeping, 0);
 	}
