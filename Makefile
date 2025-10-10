@@ -2,6 +2,7 @@ SRC_DIR = srcs
 HDR_DIR = includes
 FLAGS = -Wall -Wextra -Werror -g
 CC = gcc
+ARGS = 8 625 200 200 25
 
 # MY_SRCS = execute_cmds.c\
 # 			utils1.c\
@@ -30,7 +31,7 @@ fclean: clean
 re: fclean all
 
 output: all
-	$(addprefix ./, $(NAME))
+	$(addprefix ./, $(NAME)) $(ARGS)
 
 leak: all
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes $(addprefix ./, $(NAME))

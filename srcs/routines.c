@@ -6,15 +6,15 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 09:25:02 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/09 21:09:02 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/10 12:01:19 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void	*philo_routine(void* arg)
+void	*philo_routine(void *arg)
 {
-    t_thread	*philo;
+	t_thread	*philo;
 
 	philo = (t_thread *)arg;
 	while (!philo->dead && !philo->finised)
@@ -23,58 +23,58 @@ void	*philo_routine(void* arg)
 		p_think(philo);
 		p_sleep(philo);
 	}
-    return NULL;
+	return (NULL);
 }
 
-void	*monitor_routine(void* arg)
+int	all_finished_eating(t_thread *philo, int *i, int *philo_finished)
 {
-    t_thread	*philo;
+	if (philo[*i].info.fixed_eating && !philo[*i].finised
+		&& (philo[*i].eating.counter >= philo[*i].info.times_to_eat))
+	{
+		change_state(&philo[*i], &philo[*i].finised, 1);
+		(*philo_finished)++;
+		if ((*philo_finished) >= philo[0].info.philos)
+			return (1);
+	}
+	return (0);
+}
+
+void	*monitor_routine(void *arg)
+{
+	t_thread	*philo;
 	int			i;
-	t_bool		alive;
-	int			philo_num;
 	int			philo_finished;
 
 	philo = (t_thread *)arg;
-	philo_num = philo[0].info.philos;
 	philo_finished = 0;
 	while (1)
 	{
 		i = 0;
-		while (i < philo_num)
+		while (i < philo[0].info.philos)
 		{
-			pthread_mutex_lock(philo->state_lock);
-			alive = is_alive(&philo[i]);
-			pthread_mutex_unlock(philo->state_lock);
-			if (!alive)
+			if (!is_alive(&philo[i]))
 			{
 				change_state(&philo[i], &philo[i].dead, 1);
-        		print_philo_state(&philo[i], "is dead");
+				print_philo_state(&philo[i], "is dead");
 				stop_routine(philo);
 				return (NULL);
 			}
-			if (philo[i].info.fixed_eating && !philo[i].finised
-				&& (philo[i].eating.counter >= philo[i].info.times_to_eat))
-			{
-				change_state(&philo[i], &philo[i].finised, 1);
-				philo_finished++;
-				if (philo_finished >= philo_num)
-					return (NULL);
-			}
+			if (all_finished_eating(philo, &i, &philo_finished))
+				return (NULL);
 			i++;
 		}
 		msleep(1);
 	}
-    return (NULL);
 }
 
 void	stop_routine(t_thread *philo)
 {
-	int i;
+	int	i;
 	int	num;
 
 	i = 0;
 	num = philo[0].info.philos;
-	while(i < num)
+	while (i < num)
 	{
 		change_state(&philo[i], &philo[i].dead, 1);
 		philo[i].dead = 1;
@@ -84,9 +84,10 @@ void	stop_routine(t_thread *philo)
 
 int	is_alive(t_thread *philo)
 {
-	t_eval 		tv;
+	t_eval		tv;
 	long int	dt_msec;
 
+	pthread_mutex_lock(philo->state_lock);
 	gettimeofday(&tv, NULL);
 	if (philo->eating.counter == 0)
 	{
@@ -100,8 +101,12 @@ int	is_alive(t_thread *philo)
 	}
 	if (dt_msec > philo->info.death_time)
 	{
-		printf("%d Hunger time: %ld, sec: %ld, usec: %ld\n",philo->num, dt_msec, (tv.tv_sec - philo->eating.t_sec), (tv.tv_usec - philo->eating.t_usec));
+		printf ("%d Hunger time: %ld, sec: %ld, usec: %ld\n", philo->num,
+			dt_msec, (tv.tv_sec - philo->eating.t_sec),
+			(tv.tv_usec - philo->eating.t_usec));
+		pthread_mutex_unlock(philo->state_lock);
 		return (0);
 	}
+	pthread_mutex_unlock(philo->state_lock);
 	return (1);
 }

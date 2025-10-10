@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 09:26:03 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/09 23:37:22 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/10 11:55:19 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,55 +43,47 @@ void	change_state(t_thread *philo, t_bool *state, t_bool ans)
 
 void	set_time(t_thread *philo, t_state *state, t_bool ans)
 {
-	t_eval tv;
-	
+	t_eval	tv;
+
 	pthread_mutex_lock(philo->state_lock);
 	state->ans = ans;
 	gettimeofday(&tv, NULL);
 	state->t_sec = tv.tv_sec;
 	state->t_usec = tv.tv_usec;
 	philo->eating.counter++;
-    print_philo_state(philo, "is eating");
-	printf("Philosopher %d is eating for %d times\n", philo->num
-            , philo->eating.counter);
+	print_philo_state(philo, "is eating");
+	printf("Philosopher %d is eating for %d times\n", philo->num,
+		philo->eating.counter);
 	pthread_mutex_unlock(philo->state_lock);
 }
 
 void	p_eat(t_thread *philo)
 {
-	if (!*philo->fl && !*philo->fr && !philo->finised && !philo->sleeping
-			&& !philo->thinking && !philo->eating.ans && !philo->dead)
+	if (!philo->finised && !philo->sleeping
+		&& !philo->thinking && !philo->eating.ans && !philo->dead)
 	{
-
-		pthread_mutex_lock(philo->fork_left);
-		// change_state(philo, &philo->fl, 1);
-		pthread_mutex_lock(philo->fork_right);
-		// change_state(philo, &philo->fr, 1);
-		pthread_mutex_lock(philo->state_lock);
-		*philo->fl = 1;
-		*philo->fr = 1;
-		pthread_mutex_unlock(philo->state_lock);
-		
+		if (philo->num % 2 == 0)
+			pthread_mutex_lock(philo->fork_left);
+		else
+			pthread_mutex_lock(philo->fork_right);
+		print_philo_state(philo, "has taken first fork");
+		if (philo->num % 2 == 0)
+			pthread_mutex_lock(philo->fork_right);
+		else
+			pthread_mutex_lock(philo->fork_left);
+		print_philo_state(philo, "has taken second fork");
 		set_time(philo, &philo->eating, 1);
 		msleep(philo->info.eating_time);
-		
-		pthread_mutex_lock(philo->state_lock);
-		*philo->fl = 0;
-		*philo->fr = 0;
-		pthread_mutex_unlock(philo->state_lock);
 		change_state(philo, &philo->eating.ans, 0);
-		// change_state(philo, &philo->fr, 0);
 		pthread_mutex_unlock(philo->fork_right);
-		// change_state(philo, &philo->fl, 0);
 		pthread_mutex_unlock(philo->fork_left);
-		print_philo_state(philo, "finished eating");
 	}
 }
 
 void	p_think(t_thread *philo)
 {
 	if (!philo->finised && !philo->sleeping
-			&& !philo->thinking && !philo->eating.ans && !philo->dead)
+		&& !philo->thinking && !philo->eating.ans && !philo->dead)
 	{
 		change_state(philo, &philo->thinking, 1);
 		msleep(philo->info.thinking_time);
@@ -102,7 +94,7 @@ void	p_think(t_thread *philo)
 void	p_sleep(t_thread *philo)
 {
 	if (!philo->finised && !philo->sleeping
-			&& !philo->thinking && !philo->eating.ans && !philo->dead)
+		&& !philo->thinking && !philo->eating.ans && !philo->dead)
 	{
 		change_state(philo, &philo->sleeping, 1);
 		msleep(philo->info.sleeping_time);
