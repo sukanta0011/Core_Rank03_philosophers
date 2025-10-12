@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 11:14:47 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/10 11:55:47 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/11 15:11:47 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,13 +98,4 @@ void	init_lock(t_thread *philo, t_info *info)
 		philo[i].state_lock = &state_lock[0];
 		i++;
 	}
-}
-
-int	init_philos(t_thread *philo, t_info *info)
-{
-	init_states(philo, info);
-	init_start_time(philo, info);
-	init_left_right_fork(philo, info);
-	init_lock(philo, info);
-	return (1);
 }

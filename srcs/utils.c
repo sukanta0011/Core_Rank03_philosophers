@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 11:17:29 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/10 12:01:29 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/11 15:14:05 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,25 @@ int	str_to_unum(char *str, long int *num)
 	}
 	(*num) = (*num) * sign;
 	return (1);
+}
+
+void	msleep(long int msec)
+{
+	t_eval		tv;
+	long int	start_sec;
+	long int	start_usec;
+	long int	dmsec;
+
+	gettimeofday(&tv, NULL);
+	start_sec = tv.tv_sec;
+	start_usec = tv.tv_usec;
+	dmsec = 0;
+	while (dmsec < msec)
+	{
+		usleep(100);
+		gettimeofday(&tv, NULL);
+		dmsec = (tv.tv_sec - start_sec) * 1000
+			+ (tv.tv_usec - start_usec) / 1000;
+	}
+	return ;
 }

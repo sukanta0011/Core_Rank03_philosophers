@@ -2,7 +2,7 @@ SRC_DIR = srcs
 HDR_DIR = includes
 FLAGS = -Wall -Wextra -Werror -g
 CC = gcc
-ARGS = 8 625 200 200 25
+ARGS = 8 600 200 200
 
 # MY_SRCS = execute_cmds.c\
 # 			utils1.c\
@@ -34,7 +34,7 @@ output: all
 	$(addprefix ./, $(NAME)) $(ARGS)
 
 leak: all
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes $(addprefix ./, $(NAME))
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes $(addprefix ./, $(NAME)) $(ARGS)
 
 norm:
 	norminette -R CheckDefine

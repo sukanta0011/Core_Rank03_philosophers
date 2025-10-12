@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 19:33:26 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/10 13:35:49 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/11 15:43:22 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,19 @@ int	init_info(int argc, char **argv, t_info *info)
 	return (1);
 }
 
+int	init_philos(t_thread *philo, t_info *info)
+{
+	init_states(philo, info);
+	init_start_time(philo, info);
+	init_left_right_fork(philo, info);
+	init_lock(philo, info);
+	return (1);
+}
+
 void	free_memory(t_thread *philo, t_info *info)
-{	
+{
 	int	i;
-	
+
 	i = 0;
 	while (i < info[0].philos)
 	{
@@ -72,32 +81,15 @@ int	main(int argc, char **argv)
 	{
 		philo = malloc(sizeof(t_thread) * info[0].philos);
 		init_philos(philo, &info[0]);
-		i = 0;
-		while (i < info[0].philos)
-		{
+		i = -1;
+		while (++i < info[0].philos)
 			pthread_create(&philo[i].thread, NULL, philo_routine, &philo[i]);
-			i++;
-		}
 		pthread_create(&monitor, NULL, monitor_routine, philo);
 		pthread_join(monitor, NULL);
-		i = 0;
-		while (i < info[0].philos)
-		{
+		i = -1;
+		while (++i < info[0].philos)
 			pthread_join(philo[i].thread, NULL);
-			i++;
-		}
-		i = 0;
-		while (i < info[0].philos)
-		{
-			pthread_mutex_destroy(philo[0].fork_left);
-			i++;
-		}
-		free(philo[0].fork_left);
-		pthread_mutex_destroy(philo[0].print_lock);
-		pthread_mutex_destroy(philo[0].state_lock);
-		free(philo[0].print_lock);
-		free(philo[0].state_lock);
-		free(philo);
+		free_memory(philo, info);
 	}
 	free(info);
 	return (0);
