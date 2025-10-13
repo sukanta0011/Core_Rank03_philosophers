@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 11:17:29 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/13 16:28:58 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/13 15:23:00 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,5 +58,4 @@ void	msleep(long int msec)
 			+ (tv.tv_usec - start_usec) / 1000;
 	}
 	// printf ("Stopped_msleep msec: %ld, usec: %ld\n", dmsec, tv.tv_usec);
-	// usleep(msec * 1000);
 }

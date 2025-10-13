@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 09:25:02 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/13 16:38:18 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/13 14:51:15 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	*monitor_routine(void *arg)
 				return (NULL);
 			i++;
 		}
-		msleep(1);
+		msleep(5);
 	}
 }
 
@@ -77,6 +77,7 @@ void	stop_routine(t_thread *philo)
 	while (i < num)
 	{
 		change_state(&philo[i], &philo[i].dead, 1);
+		philo[i].dead = 1;
 		i++;
 	}
 }
@@ -98,15 +99,14 @@ int	is_alive(t_thread *philo)
 		dt_msec = (tv.tv_sec - philo->eating.t_sec) * 1000
 			+ (tv.tv_usec - philo->eating.t_usec) / 1000;
 	}
-	pthread_mutex_unlock(philo->state_lock);
 	if (dt_msec > philo->info.death_time)
 	{
-		pthread_mutex_lock(philo->print_lock);
 		printf ("%d Hunger time: %ld, sec: %ld, usec: %ld\n", philo->num,
 			dt_msec, (tv.tv_sec - philo->eating.t_sec),
 			(tv.tv_usec - philo->eating.t_usec));
-		pthread_mutex_unlock(philo->print_lock);
+		pthread_mutex_unlock(philo->state_lock);
 		return (0);
 	}
+	pthread_mutex_unlock(philo->state_lock);
 	return (1);
 }

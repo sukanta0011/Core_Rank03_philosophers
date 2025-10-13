@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 11:14:47 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/13 16:27:57 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/11 15:11:47 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,14 +88,14 @@ void	init_lock(t_thread *philo, t_info *info)
 	t_mutex		*state_lock;
 
 	print_lock = malloc(sizeof(t_mutex) * 1);
-	state_lock = malloc(sizeof(t_mutex) * info->philos);
+	state_lock = malloc(sizeof(t_mutex) * 1);
 	pthread_mutex_init(&print_lock[0], NULL);
-	init_forks(state_lock, info->philos);
+	pthread_mutex_init(&state_lock[0], NULL);
 	i = 0;
 	while (i < info->philos)
 	{
 		philo[i].print_lock = &print_lock[0];
-		philo[i].state_lock = &state_lock[i];
+		philo[i].state_lock = &state_lock[0];
 		i++;
 	}
 }

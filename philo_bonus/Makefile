@@ -2,7 +2,7 @@ SRC_DIR = srcs
 HDR_DIR = includes
 FLAGS = -Wall -Wextra -Werror -g
 CC = gcc
-ARGS = 4 700 200 200
+ARGS = 8 600 200 200
 
 # MY_SRCS = execute_cmds.c\
 # 			utils1.c\
