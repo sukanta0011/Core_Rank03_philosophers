@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 11:47:21 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/13 15:40:05 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/13 23:34:21 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,11 @@ typedef struct s_info
 
 typedef struct s_lock
 {
-	t_mutex		print;
-	t_mutex		state;
+	sem_t		print;
+	sem_t		state;
 }				t_lock;
 
-typedef struct s_thread
+typedef struct s_process
 {
 	pid_t		pid;
 	int			num;
@@ -63,10 +63,10 @@ typedef struct s_thread
 	t_bool		finised;
 	t_bool		dead;
 	sem_t		*fork_left;
-	t_mutex		*fork_right;
-	t_mutex		*print_lock;
-	t_mutex		*state_lock;
-}				t_thread;
+	sem_t		*fork_right;
+	sem_t		*print_lock;
+	sem_t		*state_lock;
+}				t_process;
 
 void	print_philo_state(t_thread *philo, char *msg);
 void	filter_philo_state_changed(t_thread *philo, t_bool *state);

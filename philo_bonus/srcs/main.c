@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 19:33:26 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/13 15:35:44 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/13 23:37:00 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	free_memory(t_thread *philo, t_info *info)
 int	main(int argc, char **argv)
 {
 	t_info		*info;
-	t_thread	*philo;
+	t_process	*philo;
 	pthread_t	monitor;
 	int			i;
 
@@ -79,18 +79,19 @@ int	main(int argc, char **argv)
 		return (0);
 	if (init_info(argc, argv, &info[0]))
 	{
-		philo = malloc(sizeof(t_thread) * info[0].philos);
+		philo = malloc(sizeof(t_process) * info[0].philos);
 		init_philos(philo, &info[0]);
 		i = -1;
 		while (++i < info[0].philos)
 		{
-			pthread_create(&philo[i].thread, NULL, philo_routine, &philo[i]);
+			philo[i].pid = fork()
+			// pthread_create(&philo[i].thread, NULL, philo_routine, &philo[i]);
 		}
 		pthread_create(&monitor, NULL, monitor_routine, philo);
 		pthread_join(monitor, NULL);
 		i = -1;
 		while (++i < info[0].philos)
-			pthread_join(philo[i].thread, NULL);
+			waitpid(-1, NULL, 0);
 		free_memory(philo, info);
 	}
 	free(info);
