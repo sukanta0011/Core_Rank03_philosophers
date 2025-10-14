@@ -2,7 +2,7 @@ SRC_DIR = srcs
 HDR_DIR = includes
 FLAGS = -Wall -Wextra -Werror -g
 CC = gcc
-ARGS = 8 600 200 200
+ARGS = 3 650 200 200 5
 
 # MY_SRCS = execute_cmds.c\
 # 			utils1.c\
@@ -11,7 +11,7 @@ ARGS = 8 600 200 200
 # SRCS = $(addprefix $(SRC_DIR)/, $(MY_SRCS))
 SRCS = $(wildcard srcs/*.c)
 OBJS = $(SRCS:.c=.o)
-NAME = philo
+NAME = philo_bonus
 
 all: $(NAME)
 

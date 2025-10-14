@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 09:26:03 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/13 16:46:53 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/14 16:06:24 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,16 +64,16 @@ void	p_eat(t_thread *philo)
 			second_fork = philo->fork_left;
 		}
 		pthread_mutex_lock(philo->print_lock);
-		printf("%ld ms, %d is trying to eat\n", get_current_time(philo), philo->num);
+		// printf("%ld ms, %d is trying to eat\n", get_current_time(philo), philo->num);
 		pthread_mutex_unlock(philo->print_lock);
 		
 		pthread_mutex_lock(first_fork);
 		pthread_mutex_lock(philo->print_lock);
-		printf("%ld ms, %d got first fork\n", get_current_time(philo), philo->num);
+		// printf("%ld ms, %d got first fork\n", get_current_time(philo), philo->num);
 		pthread_mutex_unlock(philo->print_lock);
 		pthread_mutex_lock(second_fork);
 		pthread_mutex_lock(philo->print_lock);
-		printf("%ld ms, %d got second fork\n", get_current_time(philo), philo->num);
+		// printf("%ld ms, %d got second fork\n", get_current_time(philo), philo->num);
 		pthread_mutex_unlock(philo->print_lock);
 		// Check if died while waiting
 		pthread_mutex_lock(philo->state_lock);

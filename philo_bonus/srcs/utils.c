@@ -6,11 +6,11 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 11:17:29 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/13 15:23:00 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/14 15:02:09 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "philo_bonus.h"
 
 int	str_to_unum(char *str, long int *num)
 {

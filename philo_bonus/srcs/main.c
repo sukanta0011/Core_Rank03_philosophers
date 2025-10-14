@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 19:33:26 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/14 14:27:18 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/14 16:31:43 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ void	free_memory(t_process *philo, t_info *info)
 {
 	int	i;
 
+	printf("freeing memory\n");
 	i = 0;
 	while (i < info[0].philos)
 	{
@@ -66,9 +67,9 @@ int	main(int argc, char **argv)
 {
 	t_info		*info;
 	t_process	*philo;
-	// pthread_t	monitor;
 	int			i;
 	pid_t		pid;
+	t_lock		lock;
 
 	info = malloc(sizeof(t_info));
 	if (!info)
@@ -78,6 +79,7 @@ int	main(int argc, char **argv)
 		philo = malloc(sizeof(t_process) * info[0].philos);
 		init_philos(philo, &info[0]);
 		init_sems(info->philos);
+		lock.dead = sem_open("/dead", 0);
 		i = -1;
 		while (++i < info[0].philos)
 		{
@@ -90,9 +92,9 @@ int	main(int argc, char **argv)
 			else
 				philo[i].pid = pid;
 		}
-		// pthread_create(&monitor, NULL, monitor_routine, philo);
-		// pthread_join(monitor, NULL);
 		i = -1;
+		if ((sem_wait(lock.dead)))
+			kill_all_processes(philo);
 		while (++i < info[0].philos)
 			waitpid(philo[i].pid, NULL, 0);
 		free_memory(philo, info);

@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 11:14:47 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/14 13:30:01 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/14 14:57:22 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,10 @@ void	init_sems(int num)
 {
 	sem_unlink("/print");
 	sem_unlink("/forks");
+	sem_unlink("/dead");
+	sem_unlink("/finised");
 	sem_open("/print", O_CREAT, 0644, 1);
 	sem_open("/forks", O_CREAT, 0644, num);
+	sem_open("/dead", O_CREAT, 0644, 0);
+	sem_open("/finised", O_CREAT, 0644, 0);
 }
