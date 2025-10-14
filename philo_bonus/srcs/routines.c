@@ -6,83 +6,69 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 09:25:02 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/13 14:51:15 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/14 14:32:45 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "philo_bonus.h"
 
 void	*philo_routine(void *arg)
 {
-	t_thread	*philo;
+	t_process	*philo;
+	sem_t		*forks;
+	sem_t		*print;
 
-	philo = (t_thread *)arg;
+	philo = (t_process *)arg;
+	forks = sem_open("/forks", 0);
+	print = sem_open("/print", 0);
 	while (!philo->dead && !philo->finised)
 	{
-		p_eat(philo);
-		p_think(philo);
-		p_sleep(philo);
+		p_eat(philo, forks, print);
+		p_think(philo, print);
+		p_sleep(philo, print);
 	}
 	return (NULL);
 }
 
-int	all_finished_eating(t_thread *philo, int *i, int *philo_finished)
-{
-	if (philo[*i].info.fixed_eating && !philo[*i].finised
-		&& (philo[*i].eating.counter >= philo[*i].info.times_to_eat))
-	{
-		change_state(&philo[*i], &philo[*i].finised, 1);
-		(*philo_finished)++;
-		if ((*philo_finished) >= philo[0].info.philos)
-			return (1);
-	}
-	return (0);
-}
+// void	*monitor_routine(void *arg)
+// {
+// 	t_process	*philo;
+// 	int			i;
+// 	int			philo_finished;
 
-void	*monitor_routine(void *arg)
-{
-	t_thread	*philo;
-	int			i;
-	int			philo_finished;
+// 	philo = (t_process *)arg;
+// 	philo_finished = 0;
+// 	while (1)
+// 	{
+// 		if (!is_alive(&philo[i]))
+// 		{
+// 			change_state(&philo[i], &philo[i].dead, 1);
+// 			print_philo_state(&philo[i], "is dead");
+// 			stop_routine(philo);
+// 			return (NULL);
+// 		}
+// 		if (philo->info.fixed_eating && philo->eating.counter >= philo->info.times_to_eat)
+// 			change_state(&philo[i], &philo[i].finised, 1);
+// 		msleep(5);
+// 	}
+// }
 
-	philo = (t_thread *)arg;
-	philo_finished = 0;
-	while (1)
-	{
-		i = 0;
-		while (i < philo[0].info.philos)
-		{
-			if (!is_alive(&philo[i]))
-			{
-				change_state(&philo[i], &philo[i].dead, 1);
-				print_philo_state(&philo[i], "is dead");
-				stop_routine(philo);
-				return (NULL);
-			}
-			if (all_finished_eating(philo, &i, &philo_finished))
-				return (NULL);
-			i++;
-		}
-		msleep(5);
-	}
-}
+// void	stop_routine(t_process *philo)
+// {
+// 	int	i;
+// 	int	num;
 
-void	stop_routine(t_thread *philo)
-{
-	int	i;
-	int	num;
+// 	i = 0;
+// 	num = philo[0].info.philos;
+// 	while (i < num)
+// 	{
+// 		kill(philo[i].pid, SIGTERM);
+// 		philo[i].dead = 1;
+// 		i++;
+// 	}
+// }
 
-	i = 0;
-	num = philo[0].info.philos;
-	while (i < num)
-	{
-		change_state(&philo[i], &philo[i].dead, 1);
-		philo[i].dead = 1;
-		i++;
-	}
-}
-
-int	is_alive(t_thread *philo)
+int	is_alive(t_process *philo)
 {
 	t_eval		tv;
 	long int	dt_msec;

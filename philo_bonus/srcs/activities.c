@@ -6,21 +6,21 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 09:26:03 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/13 15:25:41 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/14 14:24:22 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "philo_bonus.h"
 
-void	change_state(t_thread *philo, t_bool *state, t_bool ans)
+void	change_state(t_process *philo, t_bool *state, t_bool ans, sem_t *print)
 {
 	pthread_mutex_lock(philo->state_lock);
 	*state = ans;
-	filter_philo_state_changed(philo, state);
+	filter_philo_state_changed(philo, state, print);
 	pthread_mutex_unlock(philo->state_lock);
 }
 
-void	set_time(t_thread *philo, t_state *state, t_bool ans)
+void	set_time(t_process *philo, t_state *state, t_bool ans, sem_t *print)
 {
 	t_eval	tv;
 
@@ -30,54 +30,45 @@ void	set_time(t_thread *philo, t_state *state, t_bool ans)
 	state->t_sec = tv.tv_sec;
 	state->t_usec = tv.tv_usec;
 	philo->eating.counter++;
-	print_philo_state(philo, "is eating");
+	print_philo_state(philo, "is eating", print);
 	printf("Philosopher %d is eating for %d times\n", philo->num,
 		philo->eating.counter);
 	pthread_mutex_unlock(philo->state_lock);
 }
 
-void	p_eat(t_thread *philo)
+void	p_eat(t_process *philo, sem_t *forks, sem_t *print)
 {
 	if (!philo->finised && !philo->sleeping
 		&& !philo->thinking && !philo->eating.ans && !philo->dead)
 	{
-		if (philo->num % 2 == 0)
-			pthread_mutex_lock(philo->fork_left);
-		else
-			pthread_mutex_lock(philo->fork_right);
-		// print_philo_state(philo, "has taken first fork");
-		if (philo->num % 2 == 0)
-			pthread_mutex_lock(philo->fork_right);
-		else
-			pthread_mutex_lock(philo->fork_left);
-		// print_philo_state(philo, "has taken second fork");
-		set_time(philo, &philo->eating, 1);
+		sem_wait(forks);
+		sem_wait(forks);
+		set_time(philo, &philo->eating, 1, print);
 		msleep(philo->info.eating_time);
-		change_state(philo, &philo->eating.ans, 0);
-		// print_philo_state(philo, "finised_eating");
-		pthread_mutex_unlock(philo->fork_right);
-		pthread_mutex_unlock(philo->fork_left);
+		change_state(philo, &philo->eating.ans, 0, print);
+		sem_post(forks);
+		sem_post(forks);
 	}
 }
 
-void	p_think(t_thread *philo)
+void	p_think(t_process *philo, sem_t *print)
 {
 	if (!philo->finised && !philo->sleeping
 		&& !philo->thinking && !philo->eating.ans && !philo->dead)
 	{
-		change_state(philo, &philo->thinking, 1);
+		change_state(philo, &philo->thinking, 1, print);
 		msleep(philo->info.thinking_time);
-		change_state(philo, &philo->thinking, 0);
+		change_state(philo, &philo->thinking, 0, print);
 	}
 }
 
-void	p_sleep(t_thread *philo)
+void	p_sleep(t_process *philo, sem_t *print)
 {
 	if (!philo->finised && !philo->sleeping
 		&& !philo->thinking && !philo->eating.ans && !philo->dead)
 	{
-		change_state(philo, &philo->sleeping, 1);
+		change_state(philo, &philo->sleeping, 1, print);
 		msleep(philo->info.sleeping_time);
-		change_state(philo, &philo->sleeping, 0);
+		change_state(philo, &philo->sleeping, 0, print);
 	}
 }

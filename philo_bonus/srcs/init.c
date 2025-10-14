@@ -6,26 +6,13 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 11:14:47 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/11 15:11:47 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/14 13:30:01 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "philo_bonus.h"
 
-int	init_forks(t_mutex *fork, int num)
-{
-	int	i;
-
-	i = 0;
-	while (i < num)
-	{
-		pthread_mutex_init(&fork[i], NULL);
-		i++;
-	}
-	return (1);
-}
-
-void	init_states(t_thread *philo, t_info *info)
+void	init_states(t_process *philo, t_info *info)
 {
 	int	i;
 
@@ -50,7 +37,7 @@ void	init_states(t_thread *philo, t_info *info)
 	}
 }
 
-void	init_start_time(t_thread *philo, t_info *info)
+void	init_start_time(t_process *philo, t_info *info)
 {
 	int			i;
 	t_eval		tv;
@@ -65,37 +52,25 @@ void	init_start_time(t_thread *philo, t_info *info)
 	}
 }
 
-void	init_left_right_fork(t_thread *philo, t_info *info)
+void	init_lock(t_process *philo, t_info *info)
 {
 	int			i;
-	t_mutex		*fork;
+	t_mutex		*state_lock;
 
-	fork = malloc(sizeof(t_mutex) * info->philos);
-	init_forks(fork, info->philos);
+	state_lock = malloc(sizeof(t_mutex) * info->philos);
 	i = 0;
 	while (i < info->philos)
 	{
-		philo[i].fork_left = &fork[i];
-		philo[i].fork_right = &fork[(i + 1) % info->philos];
+		pthread_mutex_init(&state_lock[i], NULL);
+		philo[i].state_lock = &state_lock[i];
 		i++;
 	}
 }
 
-void	init_lock(t_thread *philo, t_info *info)
+void	init_sems(int num)
 {
-	int			i;
-	t_mutex		*print_lock;
-	t_mutex		*state_lock;
-
-	print_lock = malloc(sizeof(t_mutex) * 1);
-	state_lock = malloc(sizeof(t_mutex) * 1);
-	pthread_mutex_init(&print_lock[0], NULL);
-	pthread_mutex_init(&state_lock[0], NULL);
-	i = 0;
-	while (i < info->philos)
-	{
-		philo[i].print_lock = &print_lock[0];
-		philo[i].state_lock = &state_lock[0];
-		i++;
-	}
+	sem_unlink("/print");
+	sem_unlink("/forks");
+	sem_open("/print", O_CREAT, 0644, 1);
+	sem_open("/forks", O_CREAT, 0644, num);
 }

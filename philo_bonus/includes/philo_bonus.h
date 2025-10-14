@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philosophers.h                                     :+:      :+:    :+:   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 11:47:21 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/13 23:34:21 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/14 14:28:28 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILOSOPHERS_H
-# define PHILOSOPHERS_H
+#ifndef PHILO_BONUS_H
+# define PHILO_BONUS_H
 
 # include <stdio.h>
 # include <pthread.h>
@@ -20,6 +20,9 @@
 # include <sys/time.h>
 # include <sys/stat.h>
 # include <fcntl.h>
+# include <semaphore.h>
+# include <signal.h>
+# include <sys/wait.h>
 
 typedef struct timeval	t_eval;
 typedef struct timezone	t_zone;
@@ -62,34 +65,30 @@ typedef struct s_process
 	t_bool		thinking;
 	t_bool		finised;
 	t_bool		dead;
-	sem_t		*fork_left;
-	sem_t		*fork_right;
-	sem_t		*print_lock;
-	sem_t		*state_lock;
+	t_mutex		*state_lock;
 }				t_process;
 
-void	print_philo_state(t_thread *philo, char *msg);
-void	filter_philo_state_changed(t_thread *philo, t_bool *state);
+void	print_philo_state(t_process *philo, char *msg, sem_t *print);
+void	filter_philo_state_changed(t_process *philo, t_bool *state, sem_t *print);
 
-int		init_forks(t_mutex *fork, int num);
-void	init_states(t_thread *philo, t_info *info);
-void	init_start_time(t_thread *philo, t_info *info);
-void	init_left_right_fork(t_thread *philo, t_info *info);
-void	init_lock(t_thread *philo, t_info *info);
+void	init_states(t_process *philo, t_info *info);
+void	init_start_time(t_process *philo, t_info *info);
+void	init_sems(int num);
+void	init_lock(t_process *philo, t_info *info);
 
-int		init_philos(t_thread *philo, t_info *info);
+int		init_philos(t_process *philo, t_info *info);
 
 void	*philo_routine(void *arg);
-int		all_finished_eating(t_thread *philo, int *i, int *philo_finished);
+int		all_finished_eating(t_process *philo, int *i, int *philo_finished);
 void	*monitor_routine(void *arg);
-void	stop_routine(t_thread *philo);
-int		is_alive(t_thread *philo);
+void	stop_routine(t_process *philo);
+int		is_alive(t_process *philo);
 
-void	change_state(t_thread *philo, t_bool *state, t_bool ans);
-void	set_time(t_thread *philo, t_state *state, t_bool ans);
-void	p_eat(t_thread *philo);
-void	p_think(t_thread *philo);
-void	p_sleep(t_thread *philo);
+void	change_state(t_process *philo, t_bool *state, t_bool ans, sem_t *print);
+void	set_time(t_process *philo, t_state *state, t_bool ans, sem_t *print);
+void	p_eat(t_process *philo, sem_t *forks, sem_t *print);
+void	p_think(t_process *philo, sem_t *print);
+void	p_sleep(t_process *philo, sem_t *print);
 
 int		str_to_unum(char *str, long int *num);
 void	msleep(long int msec);

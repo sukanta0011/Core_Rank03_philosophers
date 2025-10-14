@@ -6,11 +6,11 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 19:33:26 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/13 23:37:00 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/14 14:27:18 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "philo_bonus.h"
 
 int	init_info(int argc, char **argv, t_info *info)
 {
@@ -40,29 +40,24 @@ int	init_info(int argc, char **argv, t_info *info)
 	return (1);
 }
 
-int	init_philos(t_thread *philo, t_info *info)
+int	init_philos(t_process *philo, t_info *info)
 {
 	init_states(philo, info);
 	init_start_time(philo, info);
-	init_left_right_fork(philo, info);
 	init_lock(philo, info);
 	return (1);
 }
 
-void	free_memory(t_thread *philo, t_info *info)
+void	free_memory(t_process *philo, t_info *info)
 {
 	int	i;
 
 	i = 0;
 	while (i < info[0].philos)
 	{
-		pthread_mutex_destroy(philo[0].fork_left);
+		pthread_mutex_destroy(philo[i].state_lock);
 		i++;
 	}
-	free(philo[0].fork_left);
-	pthread_mutex_destroy(philo[0].print_lock);
-	pthread_mutex_destroy(philo[0].state_lock);
-	free(philo[0].print_lock);
 	free(philo[0].state_lock);
 	free(philo);
 }
@@ -71,8 +66,9 @@ int	main(int argc, char **argv)
 {
 	t_info		*info;
 	t_process	*philo;
-	pthread_t	monitor;
+	// pthread_t	monitor;
 	int			i;
+	pid_t		pid;
 
 	info = malloc(sizeof(t_info));
 	if (!info)
@@ -81,17 +77,24 @@ int	main(int argc, char **argv)
 	{
 		philo = malloc(sizeof(t_process) * info[0].philos);
 		init_philos(philo, &info[0]);
+		init_sems(info->philos);
 		i = -1;
 		while (++i < info[0].philos)
 		{
-			philo[i].pid = fork()
-			// pthread_create(&philo[i].thread, NULL, philo_routine, &philo[i]);
+			pid = fork();
+			if (pid == 0)
+			{
+				philo_routine(&philo[i]);
+				exit(0);
+			}
+			else
+				philo[i].pid = pid;
 		}
-		pthread_create(&monitor, NULL, monitor_routine, philo);
-		pthread_join(monitor, NULL);
+		// pthread_create(&monitor, NULL, monitor_routine, philo);
+		// pthread_join(monitor, NULL);
 		i = -1;
 		while (++i < info[0].philos)
-			waitpid(-1, NULL, 0);
+			waitpid(philo[i].pid, NULL, 0);
 		free_memory(philo, info);
 	}
 	free(info);
