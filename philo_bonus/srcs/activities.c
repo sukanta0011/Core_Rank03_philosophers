@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 09:26:03 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/14 15:15:07 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/15 09:26:36 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,9 @@ void	p_eat(t_process *philo)
 		&& !philo->thinking && !philo->eating.ans && !philo->dead)
 	{
 		sem_wait(philo->lock.forks);
+		print_philo_state(philo, "has taken first fork");
 		sem_wait(philo->lock.forks);
+		print_philo_state(philo, "has taken second fork");
 		set_time(philo, &philo->eating, 1);
 		msleep(philo->info.eating_time);
 		change_state(philo, &philo->eating.ans, 0);

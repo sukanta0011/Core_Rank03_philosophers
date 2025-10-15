@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 09:25:02 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/14 16:39:30 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/15 10:39:15 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,15 @@ void	*philo_routine(void *arg)
 	pthread_t	monitor;
 
 	philo = (t_process *)arg;
+	if (philo->num % 2 == 0)
+		msleep(1);
 	philo->lock.forks = sem_open("/forks", 0);
 	philo->lock.print = sem_open("/print", 0);
 	philo->lock.dead = sem_open("/dead", 0);
-	philo->lock.finised = sem_open("/finised", 0);
+	philo->lock.finished = sem_open("/finished", 0);
 	pthread_create(&monitor, NULL, monitor_routine, philo);
 	pthread_detach(monitor);
-	while (!philo->dead && !philo->finised)
+	while (!philo->dead && !philo->finished)
 	{
 		p_eat(philo);
 		p_think(philo);
@@ -43,16 +45,14 @@ void	*monitor_routine(void *arg)
 		if (!is_alive(philo))
 		{
 			change_state(philo, &philo->dead, 1);
-			// sem_wait(philo->lock.print);
-			// printf("Philo %d died", philo->num);
 			print_philo_state(philo, "is dead");
 			sem_post(philo->lock.dead);
 			exit(1);
 		}
 		if (philo->info.fixed_eating && philo->eating.counter >= philo->info.times_to_eat)
 		{
-			change_state(philo, &philo->finised, 1);
-			sem_post(philo->lock.finised);
+			change_state(philo, &philo->finished, 1);
+			sem_post(philo->lock.finished);
 			return (NULL);
 		}
 		msleep(5);

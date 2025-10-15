@@ -6,7 +6,7 @@
 /*   By: sudas <sudas@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 11:47:21 by sudas             #+#    #+#             */
-/*   Updated: 2025/10/14 16:18:52 by sudas            ###   ########.fr       */
+/*   Updated: 2025/10/15 10:25:26 by sudas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ typedef struct s_lock
 	sem_t		*print;
 	sem_t		*forks;
 	sem_t		*dead;
-	sem_t		*finised;
+	sem_t		*finished;
 }				t_lock;
 
 typedef struct s_process
@@ -65,7 +65,7 @@ typedef struct s_process
 	t_state		eating;
 	t_bool		sleeping;
 	t_bool		thinking;
-	t_bool		finised;
+	t_bool		finished;
 	t_bool		dead;
 	t_mutex		*state_lock;
 	t_lock		lock;
